@@ -1,143 +1,40 @@
-# To Miss Tania — A Teacher's Day Memory (2026)
+# To Miss Tania — A Teacher's Day Memory
 
-A personal, interactive Teacher's Day experience — not a template, not a
-form letter. Built for one person: Miss Tania, from her student Kamran.
+A single-page Teacher's Day story for Miss Tania from Kamran. It is deliberately
+photo-free and audio-free: the experience is carried by typography, motion and
+small procedural scenes instead.
 
-## What this is
+## What is included
 
-A single-page, chapter-based memory: an envelope opens, a story unfolds
-across eight cinematic chapters, and it ends with a quiet, specific thank
-you. No stock photography, no generated photo of anyone — the story is told
-through typography, motion, and a handful of procedural 3D scenes.
+- A short percentage/logo loading reveal before an interactive envelope opener.
+- A persistent animated colour-field backdrop, grain, and scene-specific visual
+  treatments so the story reads as one continuous world rather than separate pages.
+- Seven distinct chapter systems: editorial serif intro, fragmented condensed
+  confidence statement, technical guidance bento, theatrical Aladdin stage,
+  energetic song bento/waveform, handwritten tea note, and a quiet elegant ending.
+- Desktop custom cursor labels and motion-safe fallbacks for people who prefer
+  reduced motion.
+- No portraits, stock photos, autoplay audio, or downloaded 3D models.
 
-## Tech stack
-
-- **Next.js 15** (App Router) + **React 19** + **TypeScript** (strict)
-- **Tailwind CSS** for styling
-- **GSAP + ScrollTrigger** for the pinned, scrubbed cinematic sequences
-  (the CONFIDENCE kinetic-type moment, the guidance path, the Aladdin
-  curtain reveal)
-- **Motion for React** (`motion` package) for lighter component-level
-  animation (entrances, hovers, taps)
-- **Three.js** via `@react-three/fiber`, used selectively in four moments
-  (intro envelope, Aladdin stage dust, the tea cup + steam, the closing
-  particles) — everything is procedural geometry, so there are no external
-  `.glb` model files to manage
-- **lucide-react** for the handful of icons actually used
-
-### Deliberate choices worth knowing about
-
-- **No smooth-scroll library (no Lenis).** Scroll is native. This avoids
-  scroll-jacking, keeps things accessible and predictable, and plays nicely
-  with GSAP ScrollTrigger's own scrubbing — adding a second scroll layer on
-  top tends to fight it rather than help.
-- **`prefers-reduced-motion` is respected everywhere**, not just switched
-  off wholesale. Each GSAP-driven chapter has a real static fallback (the
-  words/lines are simply shown, not animated); the 3D scenes fall back to a
-  plain CSS/gradient stand-in.
-- **No autoplay audio, anywhere.** Sound starts OFF. The bottom-right toggle
-  turns it on; even then, individual sounds only fire on a real user action
-  (a click, opening the memory, pressing "Hear the voice").
-
-## Getting started
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Then open http://localhost:3000.
+Then visit `http://localhost:3000`.
 
 ```bash
-npm run lint   # ESLint
-npm run build  # production build — also the best way to catch type errors
-npm run start  # serve the production build locally
+npm run build
 ```
-
-> **Note on this build:** this project was authored in an environment
-> without npm registry access, so `npm install` / `lint` / `build` could
-> not be run here to auto-validate it. The code was written and manually
-> reviewed carefully with that in mind, but please run `npm run build`
-> yourself after installing — if anything surfaces, it'll almost certainly
-> be a small, obvious fix (a typo, a missing prop), not a structural issue.
-
-## Adding the scary-voice recording
-
-Drop your recording at:
-
-```
-public/audio/scary-voice.mp3
-```
-
-The "Listen" button in the Voice chapter (Act 06) picks it up automatically.
-Until the file exists, the button shows "Recording coming soon" instead of
-breaking — see `public/audio/README.md` for the full list of optional sound
-files.
 
 ## Project structure
 
-```
+```text
 app/
-  layout.tsx          Fonts, metadata, skip link, grain overlay
-  page.tsx             Renders <Experience />
-  icon.tsx              Generated favicon (no image asset needed)
-  opengraph-image.tsx  Generated OG card (typographic, no photo)
-  globals.css          Design tokens, grain/paper textures, focus states
-
-  components/
-    Experience.tsx      Orchestrator: loading gate, chapter tracking, sound
-    LoadingScreen.tsx     Percentage-counter opening sequence
-    OpeningScene.tsx        Act 00 — the envelope
-    ForMissTaniaScene.tsx     Act 01 — the huge title, mouse-reactive
-    BeginningScene.tsx          Act 02 — broken-grid editorial story
-    ConfidenceScene.tsx           Act 03 — FEAR→CONFIDENCE word-morph (GSAP pinned)
-    GuidanceScene.tsx               Act 04 — bento-grid of what she taught
-    AladdinScene.tsx                  Act 05 — curtain reveal + memory fragments
-    VoiceScene.tsx                      Act 06 — the scary-voice feature
-    SongScene.tsx                         Act 07 — the Sports Day song
-    TeaScene.tsx                            Act 08 — POUR-triggered magic mug
-    NeverSaidScene.tsx                        Act 09 — the quiet anchor
-    FinalScene.tsx                              Final — Teacher's Day
-    RevealText.tsx      Lightweight scroll-reveal for simple text
-    MagneticButton.tsx     Pointer-following CTA button
-    CursorLabel.tsx          Custom cursor label (desktop only)
-    SoundToggle.tsx            Sound on/off control
-    ChapterIndicator.tsx         00/10-style side nav + progress
-    AudioPlayer.tsx                The scary-voice playback component
-    three/                Procedural Three.js scenes (envelope, stage
-                           dust, tea cup, floating particles) + the shared
-                           SceneCanvas wrapper (handles WebGL/reduced-
-                           motion fallbacks and mobile DPR capping)
-
-  hooks/
-    useReducedMotion.ts   Live prefers-reduced-motion
-    useIsMobile.ts          Coarse-pointer / narrow-viewport detection
-    useWebglSupport.ts        WebGL capability probe
-    useSound.tsx                 Site-wide sound on/off (React Context)
-
-  utils/
-    motion.ts             Chapter list (11 acts) + shared easing constants
-    sound.ts                One-shot sound effect manager
-
-public/
-  audio/    Optional sound files (see its README.md)
-  models/   Reserved for future .glb assets (unused by the current build)
-  images/   Reserved for future assets
-  textures/ Reserved for future assets
+  components/Experience.tsx  # Client interaction and all story chapters
+  globals.css                # Responsive art direction, scenes, and animation
+  layout.tsx                 # Metadata and global stylesheet
+  page.tsx                   # Home route
 ```
-
-## Responsive testing
-
-Designed and laid out for 360, 390, 430, 768, 1024, 1280, 1440, and 1920px.
-Mobile gets its own composition, not a shrunk desktop layout: the custom
-cursor disables itself, magnetic buttons stop pulling, 3D particle counts
-drop, and the chapter indicator collapses to a thin top progress bar.
-
-## Deploying to Vercel
-
-1. Push this project to a new GitHub repository (this zip is ready to
-   extract straight into one — `node_modules` and `.next` are already
-   excluded).
-2. Go to [vercel.com/new](https://vercel.com/new), import the repository,
-   and accept the default Next.js build settings.
-3. Deploy. No environment variables are required for the current build.
